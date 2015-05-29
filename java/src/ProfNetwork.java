@@ -328,7 +328,7 @@ public class ProfNetwork {
    }//end readChoice
 
    /*
-    * Creates a new user with privided login, passowrd and phoneNum
+    * Creates a new user with provided login, password and phoneNum
     * An empty block and contact list would be generated and associated with a user
     **/
    public static void CreateUser(ProfNetwork esql){
@@ -341,7 +341,9 @@ public class ProfNetwork {
          String email = in.readLine();
 
 	 //Creating empty contact\block lists for a user
-	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+// Removing contact list temporarily for testing. Not sure if we need it??!!
+//	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+	 String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
 
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
@@ -373,5 +375,14 @@ public class ProfNetwork {
    }//end
 
 // Rest of the functions definition go in here
+  public static void FriendList(ProfNetwork esql){
+    System.out.print("\tFriend list needs work");
+  }
+  public static void UpdateProfile(ProfNetwork esql){
+  }
+  public static void NewMessage(ProfNetwork esql){
+  }
+  public static void SendRequest(ProfNetwork esql){
+  }
 
 }//end ProfNetwork
