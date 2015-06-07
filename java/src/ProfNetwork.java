@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
+//import javax.swing.*;
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
@@ -30,6 +31,20 @@ import java.util.ArrayList;
  *
  */
 public class ProfNetwork {
+// Java GUI
+//  private static void createAndShowGUI(){
+//    //Create and set up the window.
+//    JFrame frame = new JFrame("HelloWorldSwing");
+//    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//    //Add the ubiquitous "Hello World" label.
+//    JLabel label = new JLabel("Hello World");
+//    frame.getContentPane().add(label);
+//
+//    //Display the window.
+//    frame.pack();
+//    frame.setVisible(true);
+//  }
 
    // reference to physical database connection.
    private Connection _connection = null;
@@ -274,10 +289,10 @@ public class ProfNetwork {
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
-                   case 1: FriendList(esql); break;
-                   case 2: UpdateProfile(esql); break;
-                   case 3: NewMessage(esql); break;
-                   case 4: SendRequest(esql); break;
+                   case 1: FriendList(esql, authorisedUser); break;
+                   case 2: UpdateProfile(esql, authorisedUser); break;
+                   case 3: NewMessage(esql, authorisedUser); break;
+                   case 4: SendRequest(esql, authorisedUser); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -340,10 +355,10 @@ public class ProfNetwork {
          System.out.print("\tEnter user email: ");
          String email = in.readLine();
 
-	 //Creating empty contact\block lists for a user
-// Removing contact list temporarily for testing. Not sure if we need it??!!
-//	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
-	 String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
+         //Creating empty contact\block lists for a user
+         // Removing contact list temporarily for testing. Not sure if we need it??!!
+         //	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+         String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
 
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
@@ -357,32 +372,198 @@ public class ProfNetwork {
     * @return User login or null is the user does not exist
     **/
    public static String LogIn(ProfNetwork esql){
-      try{
-         System.out.print("\tEnter user login: ");
-         String login = in.readLine();
-         System.out.print("\tEnter user password: ");
-         String password = in.readLine();
+     try{
+       System.out.print("\tEnter user login: ");
+       String login = in.readLine();
+       System.out.print("\tEnter user password: ");
+       String password = in.readLine();
 
-         String query = String.format("SELECT * FROM USR WHERE userId = '%s' AND password = '%s'", login, password);
-         int userNum = esql.executeQuery(query);
-	 if (userNum > 0)
-		return login;
-         return null;
-      }catch(Exception e){
-         System.err.println (e.getMessage ());
-         return null;
-      }
+       String query = String.format("SELECT * FROM USR WHERE userid = '%s' AND password = '%s'", login, password);
+       int userNum = esql.executeQuery(query);
+       if (userNum > 0)
+         return login;
+       return null;
+     }catch(Exception e){
+       System.err.println (e.getMessage ());
+       return null;
+     }
    }//end
 
-// Rest of the functions definition go in here
-  public static void FriendList(ProfNetwork esql){
-    System.out.print("\tFriend list needs work");
+// Rest of the functions definitions go in here
+  /*
+   * Gets the list for an existing User and
+   * prints them to the screen.
+   *
+   * @param User the string holding the userid
+   */
+  public static void FriendList(ProfNetwork esql, String User){
+    try{
+      String query = String.format("SELECT connectionId FROM CONNECTION_USR WHERE userid = '%s' AND status = 'Accept'", User);
+      esql.executeQueryAndPrintResult(query);
+    }catch(Exception e){
+      System.err.println (e.getMessage ());
+    }
   }
-  public static void UpdateProfile(ProfNetwork esql){
+  /*
+   * Prints a list of commands for the User
+   * to update his profile. 
+   *
+   * @param User the string holding the userid
+   */
+  public static void UpdateProfile(ProfNetwork esql, String User){
+    System.out.println("UpdateProfile");
+    System.out.println("---------");
+    System.out.println("1. Change Password");
+    System.out.println("2. Add Education Detail");
+    System.out.println("3. Add Work Experience");
+    switch (readChoice()){
+      case 1: ChangePassword(esql, User); break;
+      case 2: AddEduDetail(esql, User); break;
+      case 3: AddWorkExpr(esql, User); break;
+      default : System.out.println("Unrecognized choice!"); break;
+    }//end switch
   }
-  public static void NewMessage(ProfNetwork esql){
+  /*
+   * Changes the User password if he knows the old password.
+   * Also make sure the User wants to change his password.
+   *
+   * @param User the string holding the userid
+   */
+  public static void ChangePassword(ProfNetwork esql, String User){
+      try{
+         System.out.print("\tAre you sure you want to change your password?: ");
+         String check = in.readLine();
+         if(!"yes".equalsIgnoreCase(check)){return;}
+         System.out.print("\tEnter previous password: ");
+         String password = in.readLine();
+         String query = String.format("SELECT * FROM USR WHERE userid = '%s' AND password = '%s'", User, password);
+         int userNum = esql.executeQuery(query);
+         if (userNum > 0){
+           System.out.print("\tEnter new password: ");
+           String newpassword = in.readLine();
+           query = String.format("UPDATE USR SET password = '%s' WHERE userid = '%s'", newpassword, User);
+           esql.executeUpdate(query);
+           System.out.print("\tPassword updated successfully!\n");
+         }
+      }catch(Exception e){
+        System.err.println (e.getMessage ());
+        return;
+      }
   }
-  public static void SendRequest(ProfNetwork esql){
+  /*
+   * Need to handle User input
+   * Also need to handle optional startdate and enddate.
+   */
+  /*
+   * Prompts the User to enter in education details. 
+   * First three fields required and last two optional.
+   *
+   * @param User the string holding the userid
+   */
+  public static void AddEduDetail(ProfNetwork esql, String User){
+    try{
+      System.out.print("\tEnter Institution Name: ");
+      String instName = in.readLine();
+      System.out.print("\tEnter Major: ");
+      String major = in.readLine();
+      System.out.print("\tEnter Degree: ");
+      String degree = in.readLine();
+      System.out.print("\tEnter startdate: ");
+      String startdate = in.readLine();
+      System.out.print("\tEnter enddate: ");
+      String enddate = in.readLine();
+      String query;
+      if("".equals(enddate)) {
+        query = String.format("INSERT INTO educational_details VALUES('%s', '%s', '%s', '%s', '%s')", User, instName, major, degree, startdate);
+      }
+      else {
+        query = String.format("INSERT INTO educational_details VALUES('%s', '%s', '%s', '%s', '%s', '%s')", User, instName, major, degree, startdate, enddate);
+      }
+      esql.executeUpdate(query);
+    }catch(Exception e){
+      System.err.println (e.getMessage ());
+      return;
+    }
+  }
+  /*
+   * Prompts the User to enter in work experience.
+   * First four fields requiered and last one is optional.
+   *
+   * @param User the string holding the userid
+   */
+  public static void AddWorkExpr(ProfNetwork esql, String User){
+    try{
+      System.out.print("\tEnter Company Name: ");
+      String compName = in.readLine();
+      System.out.print("\tEnter Role: ");
+      String role = in.readLine();
+      System.out.print("\tEnter Location: ");
+      String location = in.readLine();
+      System.out.print("\tEnter startdate: ");
+      String startdate = in.readLine();
+      System.out.print("\tEnter enddate: ");
+      String enddate = in.readLine();
+      String query;
+      if("".equals(enddate)) {
+        query = String.format("INSERT INTO work_expr VALUES('%s', '%s', '%s', '%s', '%s')", User, compName, role, location, startdate);
+      }
+      else {
+        query = String.format("INSERT INTO work_expr VALUES('%s', '%s', '%s', '%s', '%s', '%s')", User, compName, role, location, startdate, enddate);
+      }
+      esql.executeUpdate(query);
+    }catch(Exception e){
+      System.err.println (e.getMessage ());
+      return;
+    }
+  }
+  /*
+   * Creates a message between the current User
+   * and a valid userid.
+   * Other values should be inserted by trigger.
+   *
+   * @param User the string holding the userid
+   */
+  public static void NewMessage(ProfNetwork esql, String senderId){
+    try{
+      System.out.print("\tEnter Recipient: ");
+      String receiverId = in.readLine();
+      System.out.print("\tEnter message: ");
+      String contents = in.readLine();
+      String query = String.format("INSERT INTO message(senderId, receiverId, contents) VALUES('%s', '%s', '%s')", senderId, receiverId, contents);
+      esql.executeUpdate(query);
+    }catch(Exception e){
+      System.err.println (e.getMessage ());
+      return;
+    }
+  }
+  /*
+   * Sends a request for a connection between the User
+   * and a valid userid. May only send request to users
+   * who are within three levels of connection.
+   *
+   * Ex: A->B->C->D->E
+   * user A may send a request to C and D but not E.
+   *
+   * @param User the string holding the userid
+   */
+  public static void SendRequest(ProfNetwork esql, String userId){
+    try{
+      System.out.print("\tEnter Name of connection: ");
+      String connectionId = in.readLine();
+      String query = String.format("SELECT COUNT(*) FROM connection_usr where userId = '%s'", userId);
+      int num = esql.executeQuery(query);
+      if(num <= 5){
+        query = String.format("INSERT INTO connection_usr VALUES('%s', '%s', '%s')", userId, connectionId, "Request");
+        esql.executeUpdate(query);
+      }
+      //Check list of your friends friends. 
+      else{
+        System.out.println("\tImplement three level friend check");
+      }
+    }catch(Exception e){
+      System.err.println (e.getMessage ());
+      return;
+    }
   }
 
 }//end ProfNetwork

@@ -18,7 +18,7 @@ CREATE TABLE WORK_EXPR(
 	company char(50) NOT NULL, 
 	role char(50) NOT NULL,
 	location char(50),
-	startDate date,
+	startDate date NOT NULL,
 	endDate date,
 	PRIMARY KEY(userId,company,role,startDate),
   FOREIGN KEY(userId) REFERENCES USR(userId));
