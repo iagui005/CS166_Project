@@ -7,6 +7,9 @@
  * University of California - Riverside
  *
  * Target DBMS: 'Postgres'
+ * Shephard Lima 860998121
+ * Ivan Aguirre 860992036
+ * Group ID: 41
  *
  */
 
@@ -23,29 +26,19 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 //import javax.swing.*;
+//import java.awt.*;
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
  * work with PostgreSQL JDBC drivers.
  *
  */
-public class ProfNetwork {
-// Java GUI
-//  private static void createAndShowGUI(){
-//    //Create and set up the window.
-//    JFrame frame = new JFrame("HelloWorldSwing");
-//    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//    //Add the ubiquitous "Hello World" label.
-//    JLabel label = new JLabel("Hello World");
-//    frame.getContentPane().add(label);
-//
-//    //Display the window.
-//    frame.pack();
-//    frame.setVisible(true);
-//  }
-
+public class ProfNetwork{
    // reference to physical database connection.
    private Connection _connection = null;
 
@@ -241,6 +234,8 @@ public class ProfNetwork {
     * @param args the command line arguments this inclues the <mysql|pgsql> <login file>
     */
    public static void main (String[] args) {
+     //Schedule a job for the event-dispatching thread:
+     //creating and showing this application's GUI.
       if (args.length != 3) {
          System.err.println (
             "Usage: " +
@@ -261,7 +256,7 @@ public class ProfNetwork {
          String dbport = args[1];
          String user = args[2];
          esql = new ProfNetwork (dbname, dbport, user, "");
-
+         
          boolean keepon = true;
          while(keepon) {
             // These are sample SQL statements
@@ -278,6 +273,9 @@ public class ProfNetwork {
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
             if (authorisedUser != null) {
+              System.out.println("");
+              displayUser(esql, authorisedUser);
+              System.out.println("");
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
@@ -323,7 +321,138 @@ public class ProfNetwork {
          }//end try
       }//end try
    }//end main
+/*
+   JFrame frame;
+// Java GUI
+  private void createAndShowGUI(int x){
+    //Create and set up the window.
+    frame = new JFrame("cs166 Project");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.getContentPane().setLayout(new GridBagLayout());
 
+    //Add the ubiquitous "Hello World" label.
+    //JLabel label = new JLabel("Hello World");
+    //frame.getContentPane().add(label);
+
+    //Display the window.
+    switch (x){
+      default : LoginComponents(frame); break;
+    }//end switch
+    //frame.pack();
+    frame.setSize(400,500);
+    frame.setVisible(true);
+  }
+
+  private JTextField jtfName;
+  private JPasswordField jpwName;
+  private JButton jbnExit;
+  private JButton jbnLogin;
+
+  private void LoginComponents(JFrame frame)
+  {
+    JLabel jlbName = new JLabel("User Id:");
+    jtfName = new JTextField(20);
+    JLabel jlbPass = new JLabel("Password:");
+    jpwName = new JPasswordField(20);
+    jbnLogin = new JButton("Login");
+    jbnExit = new JButton("Exit");
+
+    GridBagConstraints gridBagConstraintsx01 = new GridBagConstraints();
+    gridBagConstraintsx01.gridx = 0;
+    gridBagConstraintsx01.gridy = 0;
+    gridBagConstraintsx01.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jlbName, gridBagConstraintsx01);
+    GridBagConstraints gridBagConstraintsx02 = new GridBagConstraints();
+    gridBagConstraintsx02.gridx = 1;
+    gridBagConstraintsx02.insets = new Insets(5, 5, 5, 5);
+    gridBagConstraintsx02.gridy = 0;
+    gridBagConstraintsx02.gridwidth = 2;
+    gridBagConstraintsx02.fill = GridBagConstraints.BOTH;
+    frame.getContentPane().add(jtfName, gridBagConstraintsx02);
+    GridBagConstraints gridBagConstraintsx03 = new GridBagConstraints();
+    gridBagConstraintsx03.gridx = 0;
+    gridBagConstraintsx03.gridy = 1;
+    gridBagConstraintsx03.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jlbPass, gridBagConstraintsx03);
+    GridBagConstraints gridBagConstraintsx04 = new GridBagConstraints();
+    gridBagConstraintsx04.gridx = 1;
+    gridBagConstraintsx04.insets = new Insets(5, 5, 5, 5);
+    gridBagConstraintsx04.gridy = 1;
+    gridBagConstraintsx04.gridwidth = 2;
+    gridBagConstraintsx04.fill = GridBagConstraints.BOTH;
+    frame.getContentPane().add(jpwName, gridBagConstraintsx04);
+    GridBagConstraints gridBagConstraintsx05 = new GridBagConstraints();
+    gridBagConstraintsx05.gridx = 2;
+    gridBagConstraintsx05.gridy = 5;
+    gridBagConstraintsx05.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jbnLogin, gridBagConstraintsx05);
+    jbnLogin.addActionListener(this);
+    GridBagConstraints gridBagConstraintsx06 = new GridBagConstraints();
+    gridBagConstraintsx06.gridx = 2;
+    gridBagConstraintsx06.gridy = 6;
+    gridBagConstraintsx06.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jbnExit, gridBagConstraintsx06);
+    jbnExit.addActionListener(this);
+  }
+  private void UserComponents(JFrame frame)
+  {
+    JLabel jlbName = new JLabel("User Id:");
+    jtfName = new JTextField(20);
+    JLabel jlbPass = new JLabel("Password:");
+    jpwName = new JPasswordField(20);
+    jbnLogin = new JButton("Login");
+    jbnExit = new JButton("Exit");
+
+    GridBagConstraints gridBagConstraintsx01 = new GridBagConstraints();
+    gridBagConstraintsx01.gridx = 0;
+    gridBagConstraintsx01.gridy = 0;
+    gridBagConstraintsx01.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jlbName, gridBagConstraintsx01);
+    GridBagConstraints gridBagConstraintsx02 = new GridBagConstraints();
+    gridBagConstraintsx02.gridx = 1;
+    gridBagConstraintsx02.insets = new Insets(5, 5, 5, 5);
+    gridBagConstraintsx02.gridy = 0;
+    gridBagConstraintsx02.gridwidth = 2;
+    gridBagConstraintsx02.fill = GridBagConstraints.BOTH;
+    frame.getContentPane().add(jtfName, gridBagConstraintsx02);
+    GridBagConstraints gridBagConstraintsx03 = new GridBagConstraints();
+    gridBagConstraintsx03.gridx = 0;
+    gridBagConstraintsx03.gridy = 1;
+    gridBagConstraintsx03.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jlbPass, gridBagConstraintsx03);
+    GridBagConstraints gridBagConstraintsx04 = new GridBagConstraints();
+    gridBagConstraintsx04.gridx = 1;
+    gridBagConstraintsx04.insets = new Insets(5, 5, 5, 5);
+    gridBagConstraintsx04.gridy = 1;
+    gridBagConstraintsx04.gridwidth = 2;
+    gridBagConstraintsx04.fill = GridBagConstraints.BOTH;
+    frame.getContentPane().add(jpwName, gridBagConstraintsx04);
+    GridBagConstraints gridBagConstraintsx05 = new GridBagConstraints();
+    gridBagConstraintsx05.gridx = 2;
+    gridBagConstraintsx05.gridy = 5;
+    gridBagConstraintsx05.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jbnLogin, gridBagConstraintsx05);
+    jbnLogin.addActionListener(this);
+    GridBagConstraints gridBagConstraintsx06 = new GridBagConstraints();
+    gridBagConstraintsx06.gridx = 2;
+    gridBagConstraintsx06.gridy = 6;
+    gridBagConstraintsx06.insets = new Insets(5, 5, 5, 5);
+    frame.getContentPane().add(jbnExit, gridBagConstraintsx06);
+    jbnExit.addActionListener(this);
+  }
+  public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == jbnLogin) {
+      //if(GuiLogIn(this) != null)
+      //{
+       // frame.dispose();
+      //}
+      //clear();
+    }
+    else if (e.getSource() == jbnExit) {
+      System.exit(0);
+    }
+  }
+  */
    public static void Greeting(){
       System.out.println(
          "\n\n*******************************************************\n" +
@@ -350,6 +479,84 @@ public class ProfNetwork {
       }while (true);
       return input;
    }//end readChoice
+   /*
+    * Reads the users choice given from the keyboard
+    * @int
+    **/
+   public static String readEmail() {
+      String input;
+      // returns only if a correct value is given.
+      do {
+         System.out.print("\tPlease enter email: ");
+         boolean hasAt = false;
+         boolean hasPer = false;
+         try { 
+            input = in.readLine();
+            for(int i = 0; i < input.length(); i++)
+            {
+              if(input.charAt(i) == '@')
+              {
+                hasAt = true;
+              }
+              if( input.charAt(i) == '.' && hasAt )
+              {
+                hasPer = true;
+                break;
+              }
+            }
+
+            if( hasPer != true )
+            {
+              System.out.println("\tYour input is invalid!");
+              continue;
+            }
+            break;
+         }catch (Exception e) {
+            System.out.println("\tYour input is invalid!");
+            continue;
+         }//end try
+      }while (true);
+      return input;
+   }//end readChoice
+
+   /*
+    * Reads the users choice given from the keyboard
+    * @int
+    **/
+   final static String DATE_FORMAT = "yyyy-dd-MM";
+
+   public static boolean isDateValid(String date) 
+   {
+     try {
+       SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+       df.setLenient(false);
+       df.parse(date);
+       return true;
+     } catch (ParseException e) {
+       return false;
+     }
+   }
+   public static String readDate(String datename) {
+      String input;
+      // returns only if a correct value is given.
+      do {
+         System.out.print("\tPlease enter " + datename + ": ");
+         try { 
+            input = in.readLine();
+
+            if( isDateValid(input) == false )
+            {
+              System.out.println("\tYour Date is invalid!");
+              continue;
+            }
+            break;
+         }catch (Exception e) {
+            System.out.println("\tYour input is invalid!");
+            continue;
+         }//end try
+      }while (true);
+      return input;
+   }//end readChoice
 
    /*
     * Creates a new user with provided login, password and phoneNum
@@ -361,8 +568,7 @@ public class ProfNetwork {
          String login = in.readLine();
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
-         System.out.print("\tEnter user email: ");
-         String email = in.readLine();
+         String email = readEmail();
 
          //Creating empty contact\block lists for a user
          // Removing contact list temporarily for testing. Not sure if we need it??!!
@@ -397,7 +603,7 @@ public class ProfNetwork {
        return null;
      }
    }//end
-
+   
 // Rest of the functions definitions go in here
   /*
    * Gets the list for an existing User and
@@ -407,7 +613,9 @@ public class ProfNetwork {
    */
   public static void FriendList(ProfNetwork esql, String User){
     try{
-      String query = String.format("SELECT connectionId FROM CONNECTION_USR WHERE userid = '%s' AND status = 'Accept'", User);
+      String query = String.format("SELECT connectionId FROM CONNECTION_USR WHERE (userid = '%s' AND status = 'Accept')", User);
+      esql.executeQueryAndPrintResult(query);
+      query = String.format("SELECT userid FROM CONNECTION_USR WHERE (connectionid = '%s' AND status = 'Accept')", User);
       esql.executeQueryAndPrintResult(query);
     }catch(Exception e){
       System.err.println (e.getMessage ());
@@ -477,10 +685,8 @@ public class ProfNetwork {
       String major = in.readLine();
       System.out.print("\tEnter Degree: ");
       String degree = in.readLine();
-      System.out.print("\tEnter startdate: ");
-      String startdate = in.readLine();
-      System.out.print("\tEnter enddate: ");
-      String enddate = in.readLine();
+      String startdate = readDate("startdate"); 
+      String enddate = readDate("enddate");
       String query;
       if("".equals(enddate)) {
         query = String.format("INSERT INTO educational_details VALUES('%s', '%s', '%s', '%s', '%s')", User, instName, major, degree, startdate);
@@ -508,10 +714,8 @@ public class ProfNetwork {
       String role = in.readLine();
       System.out.print("\tEnter Location: ");
       String location = in.readLine();
-      System.out.print("\tEnter startdate: ");
-      String startdate = in.readLine();
-      System.out.print("\tEnter enddate: ");
-      String enddate = in.readLine();
+      String startdate = readDate("startdate"); 
+      String enddate = readDate("enddate");
       String query;
       if("".equals(enddate)) {
         query = String.format("INSERT INTO work_expr VALUES('%s', '%s', '%s', '%s', '%s')", User, compName, role, location, startdate);
@@ -650,18 +854,52 @@ public class ProfNetwork {
   }
   public static void displayMessage(ProfNetwork esql, String userId){
     try{
-      String query = String.format("SELECT * FROM message where receiverId = '%s' and deletestatus = 0", userId);
+      String query = String.format("SELECT * FROM message where (senderId = '%s' and deletestatus != 2 and deletestatus != 3) OR (receiverId = '%s' and deletestatus != 1 and deletestatus != 3)", userId, userId);
+      if(("").equals(esql.executeQuery(query)))
+      {
+        System.out.println("\tNo Messages");
+        return;  
+      }
+      System.out.println("");
+      query = String.format("SELECT * FROM message where (senderId = '%s' and deletestatus != 2 and deletestatus != 3) OR (receiverId = '%s' and deletestatus != 1 and deletestatus != 3)", userId, userId);
       esql.executeQueryAndPrintResult(query);
-      System.out.print("\tEnter msgId: ");
+      System.out.println("");
+      System.out.print("\tEnter msgId to delete: ");
       String msgId = in.readLine();
       System.out.println("\tDelete: ");
       System.out.print("\tYes: y, No: n: ");
       String choice = in.readLine();
       if("y".equals(choice))
       {
-        query = String.format("UPDATE message SET deleteStatus = 1 WHERE receiverId = '%s'AND msgId = '%s'", userId, msgId);
+        query = String.format("SELECT receiverId, deletestatus FROM message where msgId = '%s'", msgId);
+        List<List<String>> result = esql.executeQueryAndReturnResult(query);        
+        //Reciever is deleting.  if(result.get(0).get(0).equals(userId))
+        {
+          if( result.get(0).get(1).equals( "0" ))
+          {
+            query = String.format("UPDATE message SET deletestatus = 1 WHERE receiverId = '%s' AND msgId = '%s'", userId, msgId);
+            System.out.println(query);esql.executeUpdate(query);
+          }
+          else
+          {
+            query = String.format("UPDATE message SET deletestatus = 3 WHERE receiverId = '%s' AND msgId = '%s'", userId, msgId);
+            esql.executeUpdate(query);
+          }
+        }
+        else
+        {
+          if( result.get(0).get(1).equals( "0" ))
+          {
+            query = String.format("UPDATE message SET deletestatus = 2 WHERE receiverId = '%s' AND msgId = '%s'", userId, msgId);
+            esql.executeUpdate(query);
+          }
+          else
+          {
+            query = String.format("UPDATE message SET deletestatus = 3 WHERE receiverId = '%s' AND msgId = '%s'", userId, msgId);
+            esql.executeUpdate(query);
+          }
+        }
       }
-      esql.executeUpdate(query);
     }catch(Exception e){
       System.err.println (e.getMessage ());
       return;
